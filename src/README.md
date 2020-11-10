@@ -4,7 +4,7 @@
 
 `ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), architectures, and more, reporting any issues it encounters.
 
-During scanning, a number of checks are performed to detect broken or damaged installations. Any issues found are reported in the output object's `.error` array. 
+During scanning, a number of checks are performed to detect broken or damaged installations. Compatibility checks Any issues found are reported in the output object's `.error` array. 
 
 By default, only `/Applications` and `~/Applications` are searched, but additional search directories can be provided.
 

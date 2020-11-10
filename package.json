@@ -1,5 +1,5 @@
 {
-  "name": "ableton-detect",
+  "name": "@stonegray/ableton-detect",
   "version": "0.0.1",
   "main": "./src/index.js",
   "scripts": {

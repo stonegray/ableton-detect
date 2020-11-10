@@ -8,6 +8,8 @@ import macosRelease from 'macos-release';
 import plist from 'plist';
 import semver from 'semver';
 
+import getHeaderBytes from './getHeaderBytes.js';
+
 // Search given paths and get information about installed Ableton versions.
 
 export default async function getAbletons(searchDirectories) {
@@ -173,28 +175,6 @@ export default async function getAbletons(searchDirectories) {
 
 	return installedAbletons;
 }
-
-
-// Quick function to get the first n bytes from a file. Returns false 
-// if any error occurs
-async function getHeaderBytes(file, number) {
-
-	try {	
-		const fd = await fs.promises.open(file, 'r');
-
-		const buf = Buffer.alloc(number);
-
-		const header = await fd.read(buf, 0, number);
-
-		await fd.close();
-	
-		return buf;
-
-	} catch(e){ 
-		return false;
-	}
-
-};
 
 
 async function getAbletonLicence(versions) {

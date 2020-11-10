@@ -64,7 +64,12 @@ export default async function getAbletons(searchDirectories) {
 		const plistFile = path.join(app.dir, app.name, "./Contents/Info.plist");
 
 		let plistData;
-		plistData = plist.parse(await fs.promises.readFile(plistFile, 'utf8'));
+		try {
+			plistData = plist.parse(await fs.promises.readFile(plistFile, 'utf8'));
+		} catch(e){
+			console.warn("Failed to parse Live instance, failed to read Info.plist");
+			plistData = {};
+		}
 
 		// By now we have an Ableton, so let's collect some info about it.
 		const info = {
@@ -84,10 +89,11 @@ export default async function getAbletons(searchDirectories) {
 		// Check if this is actually Live; not another application renamed. If there's a matching
 		// CFBundleIdentifier we can probably skip sanity checking the rest. 
 		if (typeof plistData.CFBundleIdentifier == 'undefined') {
+			console.warn("Failed to parse Live instance, malformed Info.plist");
 			continue;
 		}
 		if (plistData.CFBundleIdentifier !== "com.ableton.live") {
-			console.warn("Detected malformed Live application", plistFile);
+			console.warn("Failed to parse Live instance, incorrect CFBundleIdentifier");
 			continue;
 		}
 

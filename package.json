@@ -1,0 +1,36 @@
+{
+  "name": "ableton-detect",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stonegray/ableton-detect.git"
+  },
+  "author": "stonegray",
+  "license": "GPL-3.0",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/stonegray/ableton-detect/issues"
+  },
+  "homepage": "https://github.com/stonegray/ableton-detect#readme",
+  "description": "Get information from installed Ableton Live instances",
+  "keywords": [
+    "Ableton",
+    "als",
+    "Live"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "engines": {
+    "node": ">=15.0"
+  },
+  "dependencies": {
+    "macos-release": "^2.4.1",
+    "plist": "^3.0.1",
+    "semver": "^7.3.2"
+  }
+}

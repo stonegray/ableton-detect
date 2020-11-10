@@ -76,7 +76,7 @@ export default async function getAbletons(searchDirectories) {
 			language: "",
 			variant: "",
 			icon: "",
-			licenceStatus: "",
+			licenceStatus: null,
 			ok: false,
 			errors: []
 		}
@@ -116,10 +116,6 @@ export default async function getAbletons(searchDirectories) {
 		// Get the icon path so we can show the correct icons for different versions/varients
 		// like the green icon for Intro.
 		info.icon = path.join(app.dir, app.name, "./Contents/Resources", plistData.CFBundleIconFile);
-
-		// Get licence info:
-		// Since we don't know all of the ProductId fields, we can only guess on activated products.
-		info.licenceStatus = await getAbletonLicence(info.version);
 
 		// Check if binary is 32-bit or 64-bit:
 		const executablePath = path.join(app.dir, app.name, "./Contents/MacOS/Live");
@@ -176,25 +172,3 @@ export default async function getAbletons(searchDirectories) {
 	return installedAbletons;
 }
 
-
-async function getAbletonLicence(versions) {
-	return {
-		NOT_IMPLEMENTED: true		
-	};
-
-	/*
-	const prefFolder = path.join(os.homedir(), './Library/Preferences/Ableton/Live 10.1.25');
-	const oldUnlockFolder = path.join('/Library/Application Support/Ableton/');
-
-	const stream = fs.promises.readFile(path.join(prefFolder, ''));
-
-	const rl = readline.createInterface({
-		input: stream,
-		crlfDelay: Infinity
-	});
-
-	for await (const line of rl) {
-		// hmm, let's do this later.
-	}
-	*/
-}

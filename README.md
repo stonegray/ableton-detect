@@ -40,7 +40,7 @@ Output:
     fullVersion: '10.1.25 (2020-10-01_995d768242)',
     minSystemVersion: '10.11.6',
     arch: [ 'x64' ]
-    icon: '/Users/stonegray/Applications/Ableton Live 10 Lite.app/Contents/Resources/app.icns',
+    icon: '/Users/stonegray/Applications/Ableton Live 10 Lite.app/Contents/Resources/app.icns', // Icons are different between versions and varients
     licences: [
      /* Licence support is experimental and output may change in future versions */
     ],
@@ -53,9 +53,15 @@ Output:
 
 ## Licences
 
-This library provides experimental support for reading licences. Currently, there's no easy way to translate the product ID into something human readable, however it is suitable for checking for a particular feature. 
+This library provides experimental support for reading licences. Currently, it provides the following:
 
-Licences are organized by version, so the licences array for an Ableton Intro instance will contain Ableton Suite licence identifiers if the version is identical.
+- ProductID
+- ProductVersion
+- DistrobutionType
+- ResponseCode
+- Logical ID (16-bit integer, position in internal database) 
+
+Licences are stored on the system by version, so the licences array for an Ableton Intro instance will contain Ableton Suite licence identifiers if the version is identical.
 
 
 ## Changelog

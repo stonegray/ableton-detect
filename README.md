@@ -59,7 +59,15 @@ This library provides experimental support for reading licences. Currently, it p
 - ProductVersion
 - DistrobutionType
 - ResponseCode
-- Logical ID (16-bit integer, position in internal database) 
+- Logical ID (16-bit integer, position in internal database)
+  
+Example uses of this information:
+
+ - Checking that the user has access to a certain feature
+ - Licencing your software by tying it to a unique Ableton seat
+ - Verifying that the software is genuine
+
+Licences are stored in the `AB1E5678` (.cfg) files, which I don't have any documentation for. The current code to read the file format works, but needs to be rewriten once we know how to correctly decode the format using the information in the header.
 
 Licences are stored on the system by version, so the licences array for an Ableton Intro instance will contain Ableton Suite licence identifiers if the version is identical.
 

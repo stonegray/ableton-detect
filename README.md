@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/npm/dt/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) ![](https://img.shields.io/github/license/stonegray/ableton-detect)
 
-`ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), architectures, and more, reporting any issues it encounters. The goal is to be able to determine if a given instance will function. 
+`ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), licences, architectures, and more, reporting any issues it encounters. The goal is to be able to determine if a given instance will function. 
 
 During scanning, a number of checks are performed to detect broken or damaged installations. Compatibility checks Any issues found are reported in the output object's `.error` array. 
 
@@ -28,7 +28,7 @@ Output:
 [
     {
     relPath: 'Ableton Live 10 Suite.app',
-    absPath: '/Users/stonegray/Applications/Ableton Live 10 Suite.app',
+    absPath: '/Users/stonegray/Applications/Ableton Live 10 Lite.app',
     variant: 'Suite',
     version: {
       raw: '10.1.25',
@@ -40,13 +40,22 @@ Output:
     fullVersion: '10.1.25 (2020-10-01_995d768242)',
     minSystemVersion: '10.11.6',
     arch: [ 'x64' ]
-    icon: '/Users/stonegray/Applications/Ableton Live 10 Suite.app/Contents/Resources/app.icns',
-    licenceStatus: null,
+    icon: '/Users/stonegray/Applications/Ableton Live 10 Lite.app/Contents/Resources/app.icns',
+    licences: [
+     /* Licence support is experimental and output may change in future versions */
+    ],
     ok: true,
     errors: [],
   }
 ]
 ```
+
+
+## Licences
+
+This library provides experimental support for reading licences. Currently, there's no easy way to translate the product ID into something human readable, however it is suitable for checking for a particular feature. 
+
+Licences are organized by version, so the licences array for an Ableton Intro instance will contain Ableton Suite licence identifiers if the version is identical.
 
 
 ## Changelog
@@ -55,6 +64,9 @@ Output:
   - Add error for 32-bit installations on macOS versions above Catalina (10.15.x) that don't support it.
   - Add error for arm64 binaries on macOS versions prior to Big Sur (11x) that don't support it.
   - Add error for all 64-bit binaries on 32-bit platforms.
+
+`0.0.5`:
+  - Add experimental support for reading Ableton licences.
 
 
 ## TODO

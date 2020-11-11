@@ -9,6 +9,8 @@ import plist from 'plist';
 import semver from 'semver';
 
 import getHeaderBytes from './getHeaderBytes.js';
+import getLicenceInfo from './getLicenceInfo.js';
+import getLicencesByVersion from './getLicenceInfo.js';
 
 // Search given paths and get information about installed Ableton versions.
 
@@ -81,7 +83,7 @@ export default async function getAbletons(searchDirectories) {
 			language: "",
 			variant: "",
 			icon: "",
-			licenceStatus: null,
+			licences: null,
 			ok: false,
 			errors: []
 		}
@@ -196,6 +198,10 @@ export default async function getAbletons(searchDirectories) {
 		)){
 			info.errors.push(`Unsupported OS, needs ${info.minSystemVersion} or newer`);
 		};
+
+
+		// Get licence information (Experimental)
+		info.licences = await getLicencesByVersion(info.version);
 
 		// Easy boolean check if the Ableton has known issues
 		info.ok = info.errors.length == 0;

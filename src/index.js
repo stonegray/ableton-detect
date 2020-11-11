@@ -153,13 +153,41 @@ export default async function getAbletons(searchDirectories) {
 
 			// MH_CIGAM_64, CPU_TYPE_ARM | CPU_ARCH_ABI64
 			case 'cffaedfe12000001':
-				info.arch = ["aarch64"];	
+				info.arch = ["arm64"];	
 				break;
 		
 			default:
 				info.errors.push('Unknown architecture: '+headerBytesHex.toUpperCase);
 				break;
 		}
+
+
+		// Detect unusable instance, ia32 on x64 when >= catalina
+		if (semver.gt(
+			semver.coerce(macosRelease().version),
+			semver.coerce('10.15.0'),
+		)){
+			if (info.arch.includes("x32")){
+				info.errors.push('Current platform does not support 32-bit Ableton')
+			}
+		};
+
+		// Detect unusable instance, arm64 when =< Big Sur
+		if (semver.lt(
+			semver.coerce(macosRelease().version),
+			semver.coerce('11.0.0'),
+		)){
+			if (info.arch.includes("arm64")){
+				info.errors.push('Current OS does not support arm64 binaries')
+			}
+		};
+
+		// Detect x64 on x32, which is always unsupported
+		if (os.arch() == "x32" && info.arch.includes("x64")){
+				info.errors.push('64-bit binaries are not supported on 32-bit OSs')
+		}
+
+
 
 		// Check that the version is supported:
 		if (semver.lt(

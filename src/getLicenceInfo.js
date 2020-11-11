@@ -88,11 +88,12 @@ export default async function getLicencesByVersion(version) {
         // We can infer from the header structure 
         let dm = buf[40]; //buf.slice(40,41);
         licence.distrobutionType = dm;
+        /*
         if (map.distrobution[dm]) {
             licence.distrobutionTypeString = map.distrobution[dm];
         } else {
             licence.distrobutionTypeString = "Unknown"
-        }
+        }*/
 
         let rc = buf.slice(44, 44 + 160);
 

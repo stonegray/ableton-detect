@@ -11,13 +11,9 @@ import os from 'os';
 // decoding of the filetype, due to our reliance on signature-based location of
 // file features and fixed lengths to extract required information.
 
+
 // Update these are required:
 const map = {
-    version: {
-        0xA0: "10.0.0",
-        0x09: "9.0.0",
-        0x10: "Unknown"
-    },
     distrobution: {
         0x50: "Standard"
     },
@@ -37,16 +33,15 @@ export default async function getLicencesByVersion(version) {
         "./Unlock/Unlock.cfg"
     );
 
+    // If we can't open the file, just return an empty array.
     let fileContents;
     try {
         fileContents = await fs.promises.readFile(licenceFilePath);
-        
     } catch (e) {
         // Unable to access file, skip for now.
         return [];
     }
 
-    // Check that it's an ableton config file:
 
     // Start signature of each licence field:
 
@@ -84,6 +79,27 @@ export default async function getLicencesByVersion(version) {
         }
 
 
+        // Read serial number:
+
+        /* I'm not certain we're reading this correctly because it doesn't
+        match up with the .auz file we have. */
+
+        /* The .cfg file appears to show SerialNumber as a a 6-entry array,
+        which matches what we expect. */
+        
+        const serialBytes = [
+            buf.slice(4, 4+2),
+            buf.slice(8, 8+2),
+            buf.slice(12, 12+2),
+            buf.slice(16, 16+2),
+            buf.slice(20, 20+2),
+            buf.slice(24, 24+2)
+        ];
+        licence.serial = serialBytes
+            .map(b => b.toString('hex'))
+            .join('-')
+            .toUpperCase();
+
         // Read the "DistrobutionType"
         // We can infer from the header structure 
         let dm = buf[40]; //buf.slice(40,41);
@@ -99,11 +115,13 @@ export default async function getLicencesByVersion(version) {
 
         licence.response = rc;
 
-        licence.raw = buf;
+        // Remove .raw object as we're parsing everything now 
+        //licence.raw = buf;
 
         licences.push(licence);
     }
 
+    console.log(licences);
     return licences;
 }
 

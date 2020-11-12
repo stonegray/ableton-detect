@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/npm/dt/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) ![](https://img.shields.io/github/license/stonegray/ableton-detect)
 
-`ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), licences, architectures, and more, reporting any issues it encounters. The goal is to be able to determine if a given instance will function. 
+`ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), licences and serial numbers for Ableton and addons, architectures, and more, reporting any issues it encounters. The goal is to be able to determine if a given instance will function. 
 
 During scanning, a number of checks are performed to detect broken or damaged installations. Compatibility checks Any issues found are reported in the output object's `.error` array. 
 
@@ -55,6 +55,7 @@ Output:
 
 This library provides experimental support for reading licences. Currently, it provides the following:
 
+- SerialNumber (version `0.0.8+`)
 - ProductID
 - ProductVersion
 - DistrobutionType
@@ -82,6 +83,8 @@ Licences are stored on the system by version, so the licences array for an Ablet
 `0.0.5`:
   - Add experimental support for reading Ableton licences.
 
+`0.0.8`:
+  - Extend experimental support for reading Ableton licences to include SerialNumber.
 
 ## TODO
 

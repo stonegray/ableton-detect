@@ -9,7 +9,7 @@ export default async function getHeaderBytes(file, number) {
 
 		const buf = Buffer.alloc(number);
 
-		const header = await fd.read(buf, 0, number);
+		await fd.read(buf, 0, number);
 
 		await fd.close();
 

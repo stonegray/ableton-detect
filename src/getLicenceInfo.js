@@ -75,23 +75,29 @@ export default async function getLicencesByVersion(version) {
 		// Read serial number:
 		const f = buf.slice(4,26);
 
+		const temp = [];
 		const sn = [];
-		let i = 0;
-		for (const [index, byte] of f.entries()) {
 
-			// Drop nulls:
-			if (byte == 0x00) continue;
+		// Holy smokes, I'm either stupid or insufficiently caffinated, I feel like
+		// I'm code golfing trying to shuffle some bytes around.  
 
-			// Local index is position relative to non-null bytes
-			i++;
+		// Create a new array with every 2nd pair of chars removed; these are nulls,
+		// but valid data can be 0x00 so we need to go by position.
+		// AABB0000CCDD0000 -> AABBCCDD
+		for (let i in [...f]) {
+			if ((!((i - 3) % 4) || (!((i - 2) % 4)))) continue;
+			temp.push(f[i]);
+		}
 
-			// Swap pairs, AABBCCDD -> BBAADDCC
-			if (i % 2) {
-				sn[i] = byte;
+		// Swap pairs, AABBCCDD -> BBAADDCC
+		for (let [i, n] of temp.entries()) {
+			if (!!(i % 2)) { // It doesn't work without implicit bool cast...
+				sn[i-1] = temp[i];
 			} else {
-				sn[i - 2] = byte;
+				sn[i+1] = temp[i];
 			}
 		}
+
 		const serialBytes = Buffer.from(sn);
 
 		licence.serial = serialBytes

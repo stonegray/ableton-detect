@@ -11,6 +11,8 @@ import os from 'os';
 // decoding of the filetype, due to our reliance on signature-based location of
 // file features and fixed lengths to extract required information.
 
+// We are currently able to decode all information contained in the Licence fields.
+
 
 export default async function getLicencesByVersion(version) {
 
@@ -33,7 +35,6 @@ export default async function getLicencesByVersion(version) {
 
 
 	// Start signature of each licence field:
-
 	let position = 1;
 	let bufs = [];
 
@@ -62,7 +63,8 @@ export default async function getLicencesByVersion(version) {
 		// Read product type:
 		licence.productIdRaw = Buffer.from([buf[29], buf[28]]);
 
-		// 
+		licence.versionCode = buf[32];
+
 		licence.productId = licence.productIdRaw.toString('hex').toUpperCase();
 
 		// Match format in the `.auz` files by stripping nulls:

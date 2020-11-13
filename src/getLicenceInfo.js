@@ -12,18 +12,6 @@ import os from 'os';
 // file features and fixed lengths to extract required information.
 
 
-// Update these are required:
-const map = {
-	distrobution: {
-		0x50: 'Standard'
-	},
-	product: {
-		'0000': 'Ableton Live Suite',
-		'0004': 'Ableton Live Lite'
-	}
-};
-
-
 export default async function getLicencesByVersion(version) {
 
 
@@ -73,14 +61,14 @@ export default async function getLicencesByVersion(version) {
 
 		// Read product type:
 		licence.productIdRaw = Buffer.from([buf[29], buf[28]]);
+
+		// 
 		licence.productId = licence.productIdRaw.toString('hex').toUpperCase();
 
-		if (map.product[licence.productId]) {
-			licence.productString = map.product[licence.productId];
-		} else {
-			licence.productString = 'Unknown Addon 0x' + licence.productId;
+		// Match format in the `.auz` files by stripping nulls:
+		if (buf[29] == 0x00){
+			licence.productId = licence.productId.substring(2);
 		}
-
 
 		// Read serial number:
 		const f = buf.slice(4,26);
@@ -118,22 +106,13 @@ export default async function getLicencesByVersion(version) {
 		let dm = buf[40]; //buf.slice(40,41);
 		licence.distrobutionType = dm;
 
-		
-		/*
-        if (map.distrobution[dm]) {
-            licence.distrobutionTypeString = map.distrobution[dm];
-        } else {
-            licence.distrobutionTypeString = "Unknown"
-        }*/
-
-		let rc = buf.slice(44, 44 + 160);
-
-		// Infer product type. We assume that product IDs under 0x04 are Ableton, not addons:
-		if (buf[28] < 5){
-			licence.type = "Product";
-		} else {
-			licence.type = "Addon";
+		// Read responce code:
+		const rc = [];
+		for (const byte of buf.slice(44, 44 + 160)){
+			if (byte == 0x00) continue;
+			rc.push(String.fromCharCode(byte));
 		}
+		licence.responseCode = rc.join('');
 
 		licences.push(licence);
 	}

@@ -208,7 +208,7 @@ export default async function getAbletons(searchDirectories) {
 		for (const l of licences){
 
 			// Seperate addons, and append to info obj:
-			if (l.productIdRaw[0] == 0x00 && 
+			if (l.productIdRaw[0] !== 0x00 || 
 				l.productIdRaw[1] > 5 ) {
 				info.addons.push(l);
 				continue;

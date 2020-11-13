@@ -107,6 +107,9 @@ For testing, an example Ableton serial number, licence database, and activation 
   - Bugfix: Fix flipped bytes in serial number
   - The Licence and Addon APIs are near stable, I don't expect significant changes moving forward.
 
+`0.0.12`:
+  - Bugfix: Fix 0x80-type addon product IDs incorrectly detecting as Ableton instances
+
 ## TODO
 
 - Proper support for future ARM-based versions of Ableton. I've added preliminary support already, but since no versions exist, it has not been tested.

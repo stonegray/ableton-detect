@@ -82,7 +82,6 @@ export default async function getAbletons(searchDirectories) {
 			language: '',
 			variant: '',
 			icon: '',
-			licences: null,
 			ok: false,
 			errors: []
 		};
@@ -97,6 +96,7 @@ export default async function getAbletons(searchDirectories) {
 			console.warn('Failed to parse Live instance, incorrect CFBundleIdentifier');
 			continue;
 		}
+
 
 		// Read installed variaent:
 		// ps: I had to download Intro and diff the entire folder to find this because I'm 
@@ -200,7 +200,42 @@ export default async function getAbletons(searchDirectories) {
 
 
 		// Get licence information (Experimental)
-		info.licences = await getLicencesByVersion(info.version);
+		const licences = await getLicencesByVersion(info.version);
+
+		info.addons = [];
+		info.licence = null;
+
+		for (const l of licences){
+
+			// Seperate addons, and append to info obj:
+			if (l.productIdRaw[0] == 0x00 && 
+				l.productIdRaw[1] > 5 ) {
+				info.addons.push(l);
+				continue;
+			}
+
+			// Otherwise, probably a product:
+			if (l.productIdRaw[1] == 0x00 && info.variant == "Suite"){
+				info.licence = l;
+			}
+
+			if (l.productIdRaw[1] == 0x01 && info.variant == "Standard"){
+				info.licence = l;
+			}
+
+			if (l.productIdRaw[1] == 0x02 && info.variant == "Intro"){
+				info.licence = l;
+			}
+
+			if (l.productIdRaw[1] == 0x04 && info.variant == "Lite"){
+				info.licence = l;
+			}
+		}
+
+		// Throw error if we don't have a licence:
+		if (info.licence == null){
+			info.errors.push(`Missing licence for ${info.variant} version ${info.version}`);
+		}
 
 		// Easy boolean check if the Ableton has known issues
 		info.ok = info.errors.length == 0;

@@ -23,6 +23,7 @@ const map = {
 	}
 };
 
+
 export default async function getLicencesByVersion(version) {
 
 
@@ -49,6 +50,8 @@ export default async function getLicencesByVersion(version) {
 	let bufs = [];
 
 	while (position > 0) {
+
+		// The first leading 0x00 is important as it prevents a match in the file header. 
 		position = fileContents.indexOf(Buffer.from('0000074C6963656E6365', 'hex'), position + 1);
 
 		// Capture 40+1 bytes from offset position+10, and additional 160 bytes for Response
@@ -80,30 +83,42 @@ export default async function getLicencesByVersion(version) {
 
 
 		// Read serial number:
+		const f = buf.slice(4,26);
 
-		/* I'm not certain we're reading this correctly because it doesn't
-        match up with the .auz file we have. */
+		const sn = [];
+		let i = 0;
+		for (const [index, byte] of f.entries()) {
 
-		/* The .cfg file appears to show SerialNumber as a a 6-entry array,
-        which matches what we expect. */
-        
-		const serialBytes = [
-			buf.slice(4, 4+2),
-			buf.slice(8, 8+2),
-			buf.slice(12, 12+2),
-			buf.slice(16, 16+2),
-			buf.slice(20, 20+2),
-			buf.slice(24, 24+2)
-		];
+			// Drop nulls:
+			if (byte == 0x00) continue;
+
+			// Local index is position relative to non-null bytes
+			i++;
+
+			// Swap pairs, AABBCCDD -> BBAADDCC
+			if (i % 2) {
+				sn[i] = byte;
+			} else {
+				sn[i - 2] = byte;
+			}
+		}
+		const serialBytes = Buffer.from(sn);
+
 		licence.serial = serialBytes
-			.map(b => b.toString('hex'))
+			.toString('hex')
+			.match(/.{4}/g)
 			.join('-')
 			.toUpperCase();
+
+		// Buffer
+		licence.serialBuffer = serialBytes;
 
 		// Read the "DistrobutionType"
 		// We can infer from the header structure 
 		let dm = buf[40]; //buf.slice(40,41);
 		licence.distrobutionType = dm;
+
+		
 		/*
         if (map.distrobution[dm]) {
             licence.distrobutionTypeString = map.distrobution[dm];
@@ -113,10 +128,12 @@ export default async function getLicencesByVersion(version) {
 
 		let rc = buf.slice(44, 44 + 160);
 
-		licence.response = rc;
-
-		// Remove .raw object as we're parsing everything now 
-		//licence.raw = buf;
+		// Infer product type. We assume that product IDs under 0x04 are Ableton, not addons:
+		if (buf[28] < 5){
+			licence.type = "Product";
+		} else {
+			licence.type = "Addon";
+		}
 
 		licences.push(licence);
 	}

@@ -85,6 +85,12 @@ Licences are stored on the system by version, so the licences array for all vari
 
 For testing, an example Ableton serial number, licence database, and activation file (.auz) is provided in `./resources`. This code is for testing only, it won't work to activate Ableton (obviously!)
 
+
+## Windows Support
+
+`ableton-detect` uses many macOS specific methods to achieve what it does, such as reading Mach-O headers, parsing `Info.plist` files, and reading information in `.app`s. These cannot be simply ported to Windows, and retrieving the same information would require a complete rewrite. If somebody else is willing to figure out how to collect the same data on Windows I think it would be great to add support.
+
+
 ## Projects using `ableton-detect`
 
 **Ableton Licence Backup** [[npm]](https://www.npmjs.com/package/ableton-licence-backup) [[github]](https://github.com/stonegray/ableton-licence-backup#readme)

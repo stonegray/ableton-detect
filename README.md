@@ -85,6 +85,15 @@ Licences are stored on the system by version, so the licences array for all vari
 
 For testing, an example Ableton serial number, licence database, and activation file (.auz) is provided in `./resources`. This code is for testing only, it won't work to activate Ableton (obviously!)
 
+## Projects using `ableton-detect`
+
+**Ableton Licence Backup** [[npm]](https://www.npmjs.com/package/ableton-licence-backup) [[github]](https://github.com/stonegray/ableton-licence-backup#readme)
+Extracts the Ableton licences you currently have activated on your machine, and exports them to an Ableton offline authorization (.auz) file, which can be used to reactivate all of the same products and addons in the future, without using the ableton website.
+
+*Made something neat with this library? File an issue or submit a PR!*
+
+
+
 ## Changelog
 
 `0.0.4`:

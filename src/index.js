@@ -215,19 +215,19 @@ export default async function getAbletons(searchDirectories) {
 			}
 
 			// Otherwise, probably a product:
-			if (l.productIdRaw[1] == 0x00 && info.variant == "Suite"){
+			if (l.productIdRaw[1] == 0x00 && info.variant == 'Suite'){
 				info.licence = l;
 			}
 
-			if (l.productIdRaw[1] == 0x01 && info.variant == "Standard"){
+			if (l.productIdRaw[1] == 0x01 && info.variant == 'Standard'){
 				info.licence = l;
 			}
 
-			if (l.productIdRaw[1] == 0x02 && info.variant == "Intro"){
+			if (l.productIdRaw[1] == 0x02 && info.variant == 'Intro'){
 				info.licence = l;
 			}
 
-			if (l.productIdRaw[1] == 0x04 && info.variant == "Lite"){
+			if (l.productIdRaw[1] == 0x04 && info.variant == 'Lite'){
 				info.licence = l;
 			}
 		}

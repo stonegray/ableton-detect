@@ -33,6 +33,14 @@ export default async function getLicencesByVersion(version) {
 		return [];
 	}
 
+	// Check that file magic matches:
+	const header = fileContents.slice(0,4).toString('hex');
+
+	if (header !== 'ab1e5678'){
+		console.error('Unexpected file header. Please report this issue on Github.');
+		console.error('Expected: 0xAB1E5678, got 0x'+header);
+		throw Error("Invalid Ableton .cfg header: Expected AB1E5678");
+	}
 
 	// Start signature of each licence field:
 	let position = 1;
@@ -91,7 +99,7 @@ export default async function getLicencesByVersion(version) {
 
 		// Swap pairs, AABBCCDD -> BBAADDCC
 		for (let [i, n] of temp.entries()) {
-			if (!!(i % 2)) { // It doesn't work without implicit bool cast...
+			if (i % 2) { // It doesn't work without implicit bool cast...
 				sn[i-1] = temp[i];
 			} else {
 				sn[i+1] = temp[i];

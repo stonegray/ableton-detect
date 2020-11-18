@@ -2,7 +2,7 @@
 
 **Get information from installed Ableton Live instances**
 
-![](https://img.shields.io/npm/dt/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) ![](https://img.shields.io/github/license/stonegray/ableton-detect)
+![](https://img.shields.io/npm/dt/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) ![](https://img.shields.io/github/license/stonegray/ableton-detect) ![](https://img.shields.io/node/v/@stonegray/ableton-detect)
 
 `ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), licences and serial numbers for Ableton and addons, architectures, and more, reporting any issues it encounters. The goal is to be able to determine if a given instance will function. 
 

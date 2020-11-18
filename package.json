@@ -1,6 +1,6 @@
 {
   "name": "@stonegray/ableton-detect",
-  "version": "0.0.14",
+  "version": "1.0.14",
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/stonegray/ableton-detect/issues"
   },
-  "homepage": "https://github.com/stonegray/ableton-detect#readme",
+  "homepage": "https://stonegray.ca/projects/ableton-detect.html",
   "description": "Get information from installed Ableton Live instances",
   "keywords": [
     "Ableton",

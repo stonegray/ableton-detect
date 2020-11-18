@@ -2,11 +2,11 @@
 
 **Get information from installed Ableton Live instances**
 
-![](https://img.shields.io/npm/dt/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) ![](https://img.shields.io/github/license/stonegray/ableton-detect) ![](https://img.shields.io/node/v/@stonegray/ableton-detect)
+[![](https://img.shields.io/npm/dt/@stonegray/ableton-detect) ![](https://img.shields.io/npm/v/@stonegray/ableton-detect)](https://www.npmjs.com/package/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) ![](https://img.shields.io/github/license/stonegray/ableton-detect) ![](https://img.shields.io/github/issues-raw/stonegray/ableton-detect)
 
-`ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), licences and serial numbers for Ableton and addons, architectures, and more, reporting any issues it encounters. The goal is to be able to determine if a given instance will function. 
+`ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), architectures, ableton licences, addon licences, serial numbers and more, reporting any issues it encounters. 
 
-During scanning, a number of checks are performed to detect broken or damaged installations. Compatibility checks Any issues found are reported in the output object's `.error` array. 
+During scanning, a number of checks are performed to detect broken or damaged installations. Any issues found while running compatibility checks are reported in the output object's `.error` array. 
 
 By default, only `/Applications` and `~/Applications` are searched, but additional search directories can be provided.
 

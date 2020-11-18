@@ -98,33 +98,6 @@ Extracts the Ableton licences you currently have activated on your machine, and 
 
 *Made something neat with this library? File an issue or submit a PR!*
 
-
-
-## Changelog
-
-`0.0.4`:
-  - Add error for 32-bit installations on macOS versions above Catalina (10.15.x) that don't support it.
-  - Add error for arm64 binaries on macOS versions prior to Big Sur (11x) that don't support it.
-  - Add error for all 64-bit binaries on 32-bit platforms.
-
-`0.0.5`:
-  - Add experimental support for reading Ableton licences.
-
-`0.0.8`:
-  - Extend experimental support for reading Ableton licences to include SerialNumber.
-
-`0.0.11`:
-  - Major changes to the unstable Licence feature
-  - Rename `.licences` field to `.addons`
-  - Seperate handling for Ableton and Addons, stored in `.licence` and `.addons` respectively.
-  - Breaking changes to `.responce` properties of licences, now returns hex string instead of Buffer.
-  - Now correctly reads all fields in the licence files
-  - Bugfix: Fix flipped bytes in serial number
-  - The Licence and Addon APIs are near stable, I don't expect significant changes moving forward.
-
-`0.0.12`:
-  - Bugfix: Fix 0x80-type addon product IDs incorrectly detecting as Ableton instances
-
 ## TODO
 
 - Proper support for future ARM-based versions of Ableton. I've added preliminary support already, but since no versions exist, it has not been tested. We currently check for aarch64 binaries, but it's possible that Ableton may use a "Fat binary", simiiar to universal binaries from PPC days. This is not correctly handled and will result in an "Unknown architecture" error and an empty `.arch` array. 

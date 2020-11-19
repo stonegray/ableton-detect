@@ -15,3 +15,9 @@
 
 `0.0.12`:
   - Bugfix: Fix 0x80-type addon product IDs incorrectly detecting as Ableton instances
+
+`1.0.14`:
+  - Manually bump version by `1.0.0`.
+
+`1.0.18`:
+  - Add CI & coverage instrumentation

@@ -8,8 +8,6 @@
 
 During scanning, a number of checks are performed to detect broken or damaged installations. Any issues found while running compatibility checks are reported in the output object's `.error` array. 
 
-By default, only `/Applications` and `~/Applications` are searched, but additional search directories can be provided.
-
 This package exports an ES module and requires Node 15+ and macOS.
 
 ## Examples

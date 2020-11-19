@@ -25,13 +25,11 @@ describe('Parse test licence database', function () {
 		));
 	});
 	
-	// Just a sanity check:
+	// Use the Unlock.cfg file in resources for the test:
 	it('Can mock Ableton licence database on virtual filesystem', async function () {
 		const unlockPath = path.join(
 			os.homedir(),
-			'./Library/Application Support/Ableton/',
-			`Live 99.99.99`,
-			'./Unlock/Unlock.cfg'
+			'./Library/Application Support/Ableton/Live 99.99.99/Unlock/Unlock.cfg'
 		);
 		const mocks = {};
 		mocks[unlockPath] = mockfs.load(path.resolve(cwd, 'resources/Unlock.cfg')),
@@ -39,12 +37,14 @@ describe('Parse test licence database', function () {
 	});
 
 
+	// This test just checks if we throw an error while reading the licence file. 
 	it('Can read test Ableton licence database', async ()=>{
 		await getLicencesByVersion({
 			major: 99, minor: 99, patch: 99
 		});
 	});
 
+	// These tests check our parsed data against what we expect.
 	describe('Check parsed data', async ()=>{
 
 		let licences;
@@ -82,7 +82,7 @@ describe('Parse test licence database', function () {
 		});
 
 		it('productId', async ()=>{
-			assert.strictEqual(licences[0].productId, "04", Error(
+			assert.strictEqual(licences[0].productId, '04', Error(
 				'Invalid productId, expected string "04"'
 			));
 		});
@@ -96,13 +96,13 @@ describe('Parse test licence database', function () {
 		it('Valid serial and responce codes', async ()=>{
 			assert.strictEqual(
 				licences[0].serial,
-				"51A8-6AE6-DFDB-8C40-E26E-500F",
-				Error("Failed to correctly parse serial number")
+				'51A8-6AE6-DFDB-8C40-E26E-500F',
+				Error('Failed to correctly parse serial number')
 			);
 			assert.strictEqual(
 				licences[0].responseCode,
-				"AC9F5F44DC8A8D18AFE9A9B2FF7A00407A2543EFD57F1F9E310726723BF7E34493A80D980394449D",
-				Error("Failed to correctly parse response code")
+				'AC9F5F44DC8A8D18AFE9A9B2FF7A00407A2543EFD57F1F9E310726723BF7E34493A80D980394449D',
+				Error('Failed to correctly parse response code')
 			);
 		});
 	});

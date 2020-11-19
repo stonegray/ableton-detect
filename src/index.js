@@ -238,7 +238,7 @@ export default async function getAbletons(searchDirectories) {
 		}
 
 		// Easy boolean check if the Ableton has known issues
-		info.ok = info.errors.length == 0;
+		info.ok = info.errors.length === 0;
 
 		installedAbletons.push(info);
 	}

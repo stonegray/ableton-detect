@@ -77,7 +77,7 @@ describe('Parser error handling checks', function () {
 		const unlockPath = path.join(
 			os.homedir(),
 			'./Library/Application Support/Ableton/',
-			`Live 99.99.99`,
+			'Live 99.99.99',
 			'./Unlock/Unlock.cfg'
 		);
 		const mocks = {};
@@ -96,7 +96,7 @@ describe('Parser error handling checks', function () {
 				});
 			};
 
-			assert.throws(fun, Error, "Did not throw error on malformed magic");
+			assert.throws(fun, Error, 'Did not throw error on malformed magic');
 		});
 
 	});

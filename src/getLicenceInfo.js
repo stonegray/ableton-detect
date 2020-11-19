@@ -38,8 +38,8 @@ export default async function getLicencesByVersion(version) {
 
 	if (header !== 'ab1e5678'){
 		console.error('Unexpected file header. Please report this issue on Github.');
-		console.error('Expected: 0xAB1E5678, got 0x'+header);
-		throw Error("Invalid Ableton .cfg header: Expected AB1E5678");
+		console.error('Expected: 0xAB1E5678, got 0x' + header);
+		throw Error('Invalid Ableton .cfg header: Expected AB1E5678');
 	}
 
 	// Start signature of each licence field:
@@ -76,7 +76,7 @@ export default async function getLicencesByVersion(version) {
 		licence.productId = licence.productIdRaw.toString('hex').toUpperCase();
 
 		// Match format in the `.auz` files by stripping nulls:
-		if (buf[29] == 0x00){
+		if (buf[29] === 0x00) {
 			licence.productId = licence.productId.substring(2);
 		}
 

@@ -4,7 +4,8 @@
   "main": "./src/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/** || true",
-    "test": "./node_modules/.bin/mocha --exit \"./test/**/*.test.js\""
+    "test": "./node_modules/.bin/mocha --exit \"./test/**/*.test.js\"",
+    "coverage": "./node_modules/.bin/c8 --reporter=html --reporter=lcov --reporter=text npm test"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,7 @@
     "semver": "^7.3.2"
   },
   "devDependencies": {
+    "c8": "^7.3.5",
     "eslint": "^7.13.0",
     "mocha": "^8.2.1",
     "mock-fs": "^4.13.0",

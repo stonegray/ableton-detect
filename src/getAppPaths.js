@@ -2,6 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
+// Given an array of directories, return anything in it that could
+// be a macOS application folder:
 export async function getAppPaths(searchDirectories) {
 
 	// Use defaults if no paths provided

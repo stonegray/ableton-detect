@@ -7,7 +7,8 @@ import getSortedLicences from './getLicenceInfo.js';
 
 export const abletonFilenameRegex = /Ableton .{1,100}(\.app)?/gm;
 
-export default async function getAppInfo(app) {
+// Given a path to an .app, extract the necessary information.
+export default async function scanApplication(app) {
 	// macOS applications are directories, so we can immediately exclude
 	// anything that isn't a directory type.
 	if (!app.isDirectory())

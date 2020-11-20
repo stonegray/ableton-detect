@@ -1,4 +1,3 @@
-import os from 'os';
 
 import semver from 'semver';
 import macosRelease from 'macos-release';

@@ -9,7 +9,7 @@ export default async function readJSONFile(file) {
 		fileContents = await fs.promises.readFile(file, 'utf8');
 		object = JSON.parse(fileContents);
 	} catch (e) {
-		console.error('Skipped plugin, missing Info.plist: ' + pluginPath);
+		console.error('Skipped plugin, missing Info.plist: ' + file);
 		return e;
 	}
 

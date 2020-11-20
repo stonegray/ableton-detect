@@ -1,4 +1,4 @@
-import getHeaderBytes from '../getHeaderBytes.js';
+import getHeaderBytes from './getHeaderBytes.js';
 
 export async function getArchitectureFromMacho(executablePath) {
 	const header = await getHeaderBytes(executablePath, 8);

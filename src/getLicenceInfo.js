@@ -14,7 +14,7 @@ import unconvoluteBuffer from './util/unconvoluteBuffer.js';
 
 // We are currently able to decode all information contained in the Licence fields.
 
-async function parseLicenceBuffer(index, buf){
+export async function parseLicenceBuffer(index, buf){
 
 	let licence = {};
 
@@ -131,17 +131,6 @@ export default async function getSortedLicences(version, variant){
 			continue;
 		}
 
-		// Otherwise, probably a product:
-		/*
-		if (l.productIdRaw[1] == 0x00 && variant == 'Suite') licence = l;
-
-		if (l.productIdRaw[1] == 0x01 && variant == 'Standard') licence = l;
-
-		if (l.productIdRaw[1] == 0x02 && variant == 'Intro') licence = l;
-
-		if (l.productIdRaw[1] == 0x04 && variant == 'Lite') licence = l;
-		*/
-
 		if (types[l.productIdRaw[1]] === variant) licence = l;
 	}
 
@@ -150,12 +139,3 @@ export default async function getSortedLicences(version, variant){
 		licence: licence
 	};
 }
-
-
-/*
-console.log(await getLicencesByVersion({
-    major: 10,
-    minor: 3,
-    patch: 25
-}))
-*/

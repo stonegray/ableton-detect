@@ -116,6 +116,13 @@ export default async function getSortedLicences(version, variant){
 	const addons = [];
 	let licence = {};
 
+	const types = {
+		0x00: 'Suite',
+		0x01: 'Standard',
+		0x02: 'Intro',
+		0x04: 'Lite'
+	};
+
 	for (const l of licences){
 
 		// Seperate addons, and append to info obj:
@@ -125,6 +132,7 @@ export default async function getSortedLicences(version, variant){
 		}
 
 		// Otherwise, probably a product:
+		/*
 		if (l.productIdRaw[1] == 0x00 && variant == 'Suite') licence = l;
 
 		if (l.productIdRaw[1] == 0x01 && variant == 'Standard') licence = l;
@@ -132,6 +140,9 @@ export default async function getSortedLicences(version, variant){
 		if (l.productIdRaw[1] == 0x02 && variant == 'Intro') licence = l;
 
 		if (l.productIdRaw[1] == 0x04 && variant == 'Lite') licence = l;
+		*/
+
+		if (types[l.productIdRaw[1]] === variant) licence = l;
 	}
 
 	return {

@@ -1,7 +1,7 @@
 // Unconvolute an array of bytes.
 
 
-export function unconvoluteBuffer(f){
+export default function unconvoluteBuffer(f){
 
 	const temp = [];
 	const sn = [];

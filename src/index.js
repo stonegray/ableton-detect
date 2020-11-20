@@ -160,21 +160,17 @@ async function getAppInfo(app){
 	}
 
 
+	const systemVersion = semver.coerce(macosRelease().version);
+
 	// Detect unusable instance, ia32 on x64 when >= catalina
-	if (semver.gt(
-		semver.coerce(macosRelease().version),
-		semver.coerce('10.15.0'),
-	)){
-		if (info.arch.includes('x32')){
+	if (semver.gt(systemVersion, semver.coerce('10.15.0'))) {
+		if (info.arch.includes('x32')) {
 			info.errors.push('Current platform does not support 32-bit Ableton');
 		}
 	}
 
 	// Detect unusable instance, arm64 when =< Big Sur
-	if (semver.lt(
-		semver.coerce(macosRelease().version),
-		semver.coerce('11.0.0'),
-	)){
+	if (semver.lt(systemVersion, semver.coerce('11.0.0'))) {
 		if (info.arch.includes('arm64')){
 			info.errors.push('Current OS does not support arm64 binaries');
 		}

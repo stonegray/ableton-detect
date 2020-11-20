@@ -1,92 +1,19 @@
 // Ableton version and install info
 
 import path from 'path';
-import fs from 'fs';
-import os from 'os';
 
 import semver from 'semver';
 
-import getHeaderBytes from './getHeaderBytes.js';
 import getLicencesByVersion from './getLicenceInfo.js';
 import readPlistFile from './util/readPlistFile.js';
 import readJSONFile from './util/readJSONFile.js';
 import runtimeTests from './runtimeTests.js';
-	
+import { getArchitectureFromMacho } from './util/getArchitectureFromMacho.js';
+import { getAppPaths } from './getAppPaths.js';
+import getSortedLicences from './getLicenceInfo.js';
+
 const abletonFilenameRegex = /Ableton .{1,100}(\.app)?/gm;
 
-async function getArchitectureFromMacho(executablePath) {
-	const header = await getHeaderBytes(executablePath, 8);
-
-	const headerBytesHex = header.toString('hex');
-
-	// Architecture values defined here:
-	// https://opensource.apple.com/source/cctools/cctools-836/include/mach/machine.h
-
-	// First int (magic) is defined here:
-	// https://opensource.apple.com/source/xnu/xnu-1456.1.26/EXTERNAL_HEADERS/mach-o/loader.h
-
-	switch (headerBytesHex) {
-
-	// MH_CIGAM_64, CPU_TYPE_I386 | CPU_ARCH_ABI64
-	case 'cffaedfe07000001':
-		// MH_MAGIC_64, CPU_TYPE_I386 | CPU_ARCH_ABI64
-	case 'cafebabe07000001':
-		return ['x64'];
-
-		// MH_CIGAM, CPU_TYPE_I386
-	case 'cefaedfe07000000':
-		// MH_MAGIC, CPU_TYPE_I386
-	case 'cafebabe07000000':
-		return ['x32'];
-
-		// MH_CIGAM_64, CPU_TYPE_ARM | CPU_ARCH_ABI64
-	case 'cffaedfe12000001':
-		return ['arm64'];
-
-	default:
-		return ['unknown'];
-	}
-
-}
-
-async function getAppPaths(searchDirectories) {
-
-	// Use defaults if no paths provided
-	if (!searchDirectories) {
-		searchDirectories = [
-			'/Applications',
-			path.join(os.homedir(), './Applications')
-		];
-	}
-
-	// Array of all applications detected in folder
-	let apps = [];
-
-	for (const dir of searchDirectories) {
-
-		// Read search directory and find all applications in it
-		let thisApps = await fs.promises.readdir(dir, {
-			withFileTypes: true
-		});
-
-		// Shoehorn some directory information into each app field before
-		// we lose context... grrr why don't DirEnt objects store path info?
-		thisApps = thisApps.map(a => {
-			a.dir = dir;
-			return a;
-		});
-
-		// Join arrays
-		apps = apps.concat(...thisApps);
-	}
-	return apps;
-}
-
-async function parsePlistData(plistData){
-
-
-	return {};
-}
 
 async function getAppInfo(app){
 	// macOS applications are directories, so we can immediately exclude
@@ -108,7 +35,7 @@ async function getAppInfo(app){
 	if (plistData?.CFBundleIdentifier !== 'com.ableton.live') return false;
 
 	// By now we have an Ableton, so let's collect some info about it.
-	const info = { errors: [] };
+	let info = { errors: [] };
 
 	// Populate basic file info:
 	info.relPath = app.name;
@@ -120,7 +47,7 @@ async function getAppInfo(app){
 	const installInfo = await readJSONFile(path.join(
 		app.dir, app.name, './Contents/Resources/Installation.cfg'
 	));
-	
+
 	info.variant = installInfo.variant;
 
 	// Read variant file:
@@ -146,28 +73,8 @@ async function getAppInfo(app){
 		app.dir, app.name, './Contents/MacOS/Live'
 	));
 
-	// Get licence information (Experimental)
-	const licences = await getLicencesByVersion(info.version);
-
-	info.addons = [];
-
-	for (const l of licences){
-
-		// Seperate addons, and append to info obj:
-		if (l.productIdRaw[0] !== 0x00 || l.productIdRaw[1] > 5) {
-			info.addons.push(l);
-			continue;
-		}
-
-		// Otherwise, probably a product:
-		if (l.productIdRaw[1] == 0x00 && info.variant == 'Suite') info.licence = l;
-
-		if (l.productIdRaw[1] == 0x01 && info.variant == 'Standard') info.licence = l;
-
-		if (l.productIdRaw[1] == 0x02 && info.variant == 'Intro') info.licence = l;
-
-		if (l.productIdRaw[1] == 0x04 && info.variant == 'Lite') info.licence = l;
-	}
+	// Get licence information (Experimental) and append to info:
+	info = {...info, ...await getSortedLicences(info.version, info.variant)};
 
 	return info;
 }

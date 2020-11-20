@@ -63,7 +63,7 @@ async function parseLicenceBuffer(index, buf){
 	return licence;
 }
 
-export default async function getLicencesByVersion(version) {
+export async function getLicencesByVersion(version) {
 
 	const licenceFilePath = path.join(
 		os.homedir(), `./Library/Application Support/Ableton/Live ${version.major}.${version.minor}.${version.patch}/Unlock/Unlock.cfg`
@@ -107,6 +107,39 @@ export default async function getLicencesByVersion(version) {
 
 	return licences;
 }
+
+
+export default async function getSortedLicences(version, variant){
+
+	const licences = await getLicencesByVersion(version);
+
+	const addons = [];
+	let licence = {};
+
+	for (const l of licences){
+
+		// Seperate addons, and append to info obj:
+		if (l.productIdRaw[0] !== 0x00 || l.productIdRaw[1] > 5) {
+			addons.push(l);
+			continue;
+		}
+
+		// Otherwise, probably a product:
+		if (l.productIdRaw[1] == 0x00 && variant == 'Suite') licence = l;
+
+		if (l.productIdRaw[1] == 0x01 && variant == 'Standard') licence = l;
+
+		if (l.productIdRaw[1] == 0x02 && variant == 'Intro') licence = l;
+
+		if (l.productIdRaw[1] == 0x04 && variant == 'Lite') licence = l;
+	}
+
+	return {
+		addons: addons,
+		licence: licence
+	};
+}
+
 
 /*
 console.log(await getLicencesByVersion({

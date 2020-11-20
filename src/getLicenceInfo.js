@@ -13,6 +13,83 @@ import os from 'os';
 
 // We are currently able to decode all information contained in the Licence fields.
 
+async function parseLicenceBuffer(index, buf){
+
+	let licence = {
+	};
+
+	// Position in file:
+	licence.logicalId = index;
+
+	// read encoded index, uint16 directly after LICENCE:
+	licence.licenceId = buf.readInt16LE(0);
+
+
+	// Read product type:
+	licence.productIdRaw = Buffer.from([buf[29], buf[28]]);
+
+	licence.versionCode = buf[32];
+
+	licence.productId = licence.productIdRaw.toString('hex').toUpperCase();
+
+	// Match format in the `.auz` files by stripping nulls:
+	if (buf[29] === 0x00) {
+		licence.productId = licence.productId.substring(2);
+	}
+
+	// Read serial number:
+	const f = buf.slice(4,26);
+
+	const temp = [];
+	const sn = [];
+
+	// Holy smokes, I'm either stupid or insufficiently caffinated, I feel like
+	// I'm code golfing trying to shuffle some bytes around.  
+
+	// Create a new array with every 2nd pair of chars removed; these are nulls,
+	// but valid data can be 0x00 so we need to go by position.
+	// AABB0000CCDD0000 -> AABBCCDD
+	for (let i in [...f]) {
+		if ((!((i - 3) % 4) || (!((i - 2) % 4)))) continue;
+		temp.push(f[i]);
+	}
+
+	// Swap pairs, AABBCCDD -> BBAADDCC
+	for (let [i, n] of temp.entries()) {
+		if (i % 2) { // It doesn't work without implicit bool cast...
+			sn[i-1] = temp[i];
+		} else {
+			sn[i+1] = temp[i];
+		}
+	}
+
+	const serialBytes = Buffer.from(sn);
+
+	licence.serial = serialBytes
+		.toString('hex')
+		.match(/.{4}/g)
+		.join('-')
+		.toUpperCase();
+
+	// Buffer
+	licence.serialBuffer = serialBytes;
+
+	// Read the "DistrobutionType"
+	// We can infer from the header structure 
+	let dm = buf[40]; //buf.slice(40,41);
+	licence.distrobutionType = dm;
+
+	// Read responce code:
+	const rc = [];
+	for (const byte of buf.slice(44, 44 + 160)){
+		if (byte == 0x00) continue;
+		rc.push(String.fromCharCode(byte));
+	}
+	licence.responseCode = rc.join('');
+
+
+	return licence;
+}
 
 export default async function getLicencesByVersion(version) {
 
@@ -58,79 +135,9 @@ export default async function getLicencesByVersion(version) {
 	const licences = [];
 	for (const [index, buf] of bufs.entries()) {
 
-		let licence = {
-		};
+		const l = await parseLicenceBuffer(index, buf);
 
-		// Position in file:
-		licence.logicalId = index;
-
-		// read encoded index, uint16 directly after LICENCE:
-		licence.licenceId = buf.readInt16LE(0);
-
-
-		// Read product type:
-		licence.productIdRaw = Buffer.from([buf[29], buf[28]]);
-
-		licence.versionCode = buf[32];
-
-		licence.productId = licence.productIdRaw.toString('hex').toUpperCase();
-
-		// Match format in the `.auz` files by stripping nulls:
-		if (buf[29] === 0x00) {
-			licence.productId = licence.productId.substring(2);
-		}
-
-		// Read serial number:
-		const f = buf.slice(4,26);
-
-		const temp = [];
-		const sn = [];
-
-		// Holy smokes, I'm either stupid or insufficiently caffinated, I feel like
-		// I'm code golfing trying to shuffle some bytes around.  
-
-		// Create a new array with every 2nd pair of chars removed; these are nulls,
-		// but valid data can be 0x00 so we need to go by position.
-		// AABB0000CCDD0000 -> AABBCCDD
-		for (let i in [...f]) {
-			if ((!((i - 3) % 4) || (!((i - 2) % 4)))) continue;
-			temp.push(f[i]);
-		}
-
-		// Swap pairs, AABBCCDD -> BBAADDCC
-		for (let [i, n] of temp.entries()) {
-			if (i % 2) { // It doesn't work without implicit bool cast...
-				sn[i-1] = temp[i];
-			} else {
-				sn[i+1] = temp[i];
-			}
-		}
-
-		const serialBytes = Buffer.from(sn);
-
-		licence.serial = serialBytes
-			.toString('hex')
-			.match(/.{4}/g)
-			.join('-')
-			.toUpperCase();
-
-		// Buffer
-		licence.serialBuffer = serialBytes;
-
-		// Read the "DistrobutionType"
-		// We can infer from the header structure 
-		let dm = buf[40]; //buf.slice(40,41);
-		licence.distrobutionType = dm;
-
-		// Read responce code:
-		const rc = [];
-		for (const byte of buf.slice(44, 44 + 160)){
-			if (byte == 0x00) continue;
-			rc.push(String.fromCharCode(byte));
-		}
-		licence.responseCode = rc.join('');
-
-		licences.push(licence);
+		licences.push(l);
 	}
 
 	return licences;

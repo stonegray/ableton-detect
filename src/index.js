@@ -10,7 +10,6 @@ import semver from 'semver';
 
 import getHeaderBytes from './getHeaderBytes.js';
 import getLicencesByVersion from './getLicenceInfo.js';
-import { info } from 'console';
 
 async function getAppPaths(searchDirectories) {
 

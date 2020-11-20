@@ -128,7 +128,6 @@ async function getAppInfo(app){
 		return false;
 	}
 
-
 	// Read installed variaent:
 	// ps: I had to download Intro and diff the entire folder to find this because I'm 
 	// dumb and didn't bother checking an obvious .cfg file
@@ -180,8 +179,6 @@ async function getAppInfo(app){
 	if (os.arch() == 'x32' && info.arch.includes('x64')){
 		info.errors.push('64-bit binaries are not supported on 32-bit OSs');
 	}
-
-
 
 	// Check that the version is supported:
 	if (semver.lt(

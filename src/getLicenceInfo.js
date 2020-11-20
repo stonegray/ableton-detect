@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import unconvoluteBuffer from './util/unconvoluteBuffer.js';
 
 
 // We haven't figured out exactly how these AB1E files work, so this parser is
@@ -13,15 +14,59 @@ import os from 'os';
 
 // We are currently able to decode all information contained in the Licence fields.
 
+export async function parseLicenceBuffer(index, buf){
 
-export default async function getLicencesByVersion(version) {
+	let licence = {};
 
+	// Position in file:
+	licence.logicalId = index;
+
+	// read encoded index, uint16 directly after LICENCE:
+	licence.licenceId = buf.readInt16LE(0);
+
+	// Read product type:
+	licence.productIdRaw = Buffer.from([buf[29], buf[28]]);
+
+	licence.versionCode = buf[32];
+
+	licence.productId = licence.productIdRaw.toString('hex').toUpperCase();
+
+	// Match format in the `.auz` files by stripping nulls:
+	if (buf[29] === 0x00) {
+		licence.productId = licence.productId.substring(2);
+	}
+
+	// Read serial number:
+	const serialBytes = unconvoluteBuffer(buf.slice(4,26));
+
+	licence.serial = serialBytes.toString('hex')
+		.match(/.{4}/g)
+		.join('-')
+		.toUpperCase();
+
+	// Buffer
+	licence.serialBuffer = serialBytes;
+
+	// Read the "DistrobutionType"
+	// We can infer name of this field from the header structure 
+	licence.distrobutionType = buf[40];
+
+	// Read responce code:
+	const rc = [];
+	for (const byte of buf.slice(44, 44 + 160)){
+		if (byte == 0x00) continue;
+		rc.push(String.fromCharCode(byte));
+	}
+	licence.responseCode = rc.join('');
+
+
+	return licence;
+}
+
+export async function getLicencesByVersion(version) {
 
 	const licenceFilePath = path.join(
-		os.homedir(),
-		'./Library/Application Support/Ableton/',
-		`Live ${version.major}.${version.minor}.${version.patch}`,
-		'./Unlock/Unlock.cfg'
+		os.homedir(), `./Library/Application Support/Ableton/Live ${version.major}.${version.minor}.${version.patch}/Unlock/Unlock.cfg`
 	);
 
 	// If we can't open the file, just return an empty array.
@@ -36,11 +81,8 @@ export default async function getLicencesByVersion(version) {
 	// Check that file magic matches:
 	const header = fileContents.slice(0,4).toString('hex');
 
-	if (header !== 'ab1e5678'){
-		console.error('Unexpected file header. Please report this issue on Github.');
-		console.error('Expected: 0xAB1E5678, got 0x' + header);
-		throw Error('Invalid Ableton .cfg header: Expected AB1E5678');
-	}
+	// Throw if we can't read the file:
+	if (header !== 'ab1e5678')throw Error('Invalid Ableton .cfg header: Expected AB1E5678');
 
 	// Start signature of each licence field:
 	let position = 1;
@@ -58,88 +100,42 @@ export default async function getLicencesByVersion(version) {
 	const licences = [];
 	for (const [index, buf] of bufs.entries()) {
 
-		let licence = {
-		};
+		const l = await parseLicenceBuffer(index, buf);
 
-		// Position in file:
-		licence.logicalId = index;
-
-		// read encoded index, uint16 directly after LICENCE:
-		licence.licenceId = buf.readInt16LE(0);
-
-
-		// Read product type:
-		licence.productIdRaw = Buffer.from([buf[29], buf[28]]);
-
-		licence.versionCode = buf[32];
-
-		licence.productId = licence.productIdRaw.toString('hex').toUpperCase();
-
-		// Match format in the `.auz` files by stripping nulls:
-		if (buf[29] === 0x00) {
-			licence.productId = licence.productId.substring(2);
-		}
-
-		// Read serial number:
-		const f = buf.slice(4,26);
-
-		const temp = [];
-		const sn = [];
-
-		// Holy smokes, I'm either stupid or insufficiently caffinated, I feel like
-		// I'm code golfing trying to shuffle some bytes around.  
-
-		// Create a new array with every 2nd pair of chars removed; these are nulls,
-		// but valid data can be 0x00 so we need to go by position.
-		// AABB0000CCDD0000 -> AABBCCDD
-		for (let i in [...f]) {
-			if ((!((i - 3) % 4) || (!((i - 2) % 4)))) continue;
-			temp.push(f[i]);
-		}
-
-		// Swap pairs, AABBCCDD -> BBAADDCC
-		for (let [i, n] of temp.entries()) {
-			if (i % 2) { // It doesn't work without implicit bool cast...
-				sn[i-1] = temp[i];
-			} else {
-				sn[i+1] = temp[i];
-			}
-		}
-
-		const serialBytes = Buffer.from(sn);
-
-		licence.serial = serialBytes
-			.toString('hex')
-			.match(/.{4}/g)
-			.join('-')
-			.toUpperCase();
-
-		// Buffer
-		licence.serialBuffer = serialBytes;
-
-		// Read the "DistrobutionType"
-		// We can infer from the header structure 
-		let dm = buf[40]; //buf.slice(40,41);
-		licence.distrobutionType = dm;
-
-		// Read responce code:
-		const rc = [];
-		for (const byte of buf.slice(44, 44 + 160)){
-			if (byte == 0x00) continue;
-			rc.push(String.fromCharCode(byte));
-		}
-		licence.responseCode = rc.join('');
-
-		licences.push(licence);
+		licences.push(l);
 	}
 
 	return licences;
 }
 
-/*
-console.log(await getLicencesByVersion({
-    major: 10,
-    minor: 3,
-    patch: 25
-}))
-*/
+
+export default async function getSortedLicences(version, variant){
+
+	const licences = await getLicencesByVersion(version);
+
+	const addons = [];
+	let licence = {};
+
+	const types = {
+		0x00: 'Suite',
+		0x01: 'Standard',
+		0x02: 'Intro',
+		0x04: 'Lite'
+	};
+
+	for (const l of licences){
+
+		// Seperate addons, and append to info obj:
+		if (l.productIdRaw[0] !== 0x00 || l.productIdRaw[1] > 5) {
+			addons.push(l);
+			continue;
+		}
+
+		if (types[l.productIdRaw[1]] === variant) licence = l;
+	}
+
+	return {
+		addons: addons,
+		licence: licence
+	};
+}

@@ -12,7 +12,8 @@ describe('Parser error handling checks', function () {
 	let getLicencesByVersion;
 
 	before(async function(){
-		getLicencesByVersion = (await import('../src/getLicenceInfo.js')).default;
+		const i = await import('../src/getLicenceInfo.js');
+		getLicencesByVersion = i.getLicencesByVersion;
 	});
 	after(async ()=>{
 		mockfs.restore();

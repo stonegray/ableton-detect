@@ -10,17 +10,17 @@ export default async function runtimeTests(info){
 	const systemVersion = semver.coerce(macosRelease().version);
 
 	// Detect unusable instance, ia32 on x64 when >= catalina
-	if (semver.gt(systemVersion, semver.coerce('10.15.0'))) {
-		if (info.arch.includes('x32')) {
-			errors.push('Current platform does not support 32-bit Ableton');
-		}
+	if (semver.gt(systemVersion, semver.coerce('10.15.0'))
+		&& info.arch.includes('x32')
+	) {
+		errors.push('Current platform does not support 32-bit Ableton');
 	}
 
 	// Detect unusable instance, arm64 when =< Big Sur
-	if (semver.lt(systemVersion, semver.coerce('11.0.0'))) {
-		if (info.arch.includes('arm64')){
-			errors.push('Current OS does not support arm64 binaries');
-		}
+	if (semver.lt(systemVersion, semver.coerce('11.0.0'))
+		&& info.arch.includes('arm64')
+	) {
+		errors.push('Current OS does not support arm64 binaries');
 	}
 
 	// Detect x64 on x32, which is always unsupported

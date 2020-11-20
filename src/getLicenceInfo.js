@@ -93,12 +93,8 @@ async function parseLicenceBuffer(index, buf){
 
 export default async function getLicencesByVersion(version) {
 
-
 	const licenceFilePath = path.join(
-		os.homedir(),
-		'./Library/Application Support/Ableton/',
-		`Live ${version.major}.${version.minor}.${version.patch}`,
-		'./Unlock/Unlock.cfg'
+		os.homedir(), `./Library/Application Support/Ableton/Live ${version.major}.${version.minor}.${version.patch}/Unlock/Unlock.cfg`
 	);
 
 	// If we can't open the file, just return an empty array.
@@ -113,11 +109,8 @@ export default async function getLicencesByVersion(version) {
 	// Check that file magic matches:
 	const header = fileContents.slice(0,4).toString('hex');
 
-	if (header !== 'ab1e5678'){
-		console.error('Unexpected file header. Please report this issue on Github.');
-		console.error('Expected: 0xAB1E5678, got 0x' + header);
-		throw Error('Invalid Ableton .cfg header: Expected AB1E5678');
-	}
+	// Throw if we can't read the file:
+	if (header !== 'ab1e5678')throw Error('Invalid Ableton .cfg header: Expected AB1E5678');
 
 	// Start signature of each licence field:
 	let position = 1;

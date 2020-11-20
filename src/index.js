@@ -11,6 +11,8 @@ import getLicencesByVersion from './getLicenceInfo.js';
 import readPlistFile from './util/readPlistFile.js';
 import readJSONFile from './util/readJSONFile.js';
 import runtimeTests from './runtimeTests.js';
+	
+const abletonFilenameRegex = /Ableton .{1,100}(\.app)?/gm;
 
 async function getArchitectureFromMacho(executablePath) {
 	const header = await getHeaderBytes(executablePath, 8);
@@ -80,6 +82,12 @@ async function getAppPaths(searchDirectories) {
 	return apps;
 }
 
+async function parsePlistData(plistData){
+
+
+	return {};
+}
+
 async function getAppInfo(app){
 	// macOS applications are directories, so we can immediately exclude
 	// anything that isn't a directory type.
@@ -89,41 +97,36 @@ async function getAppInfo(app){
 	// can rename their Ableton instances so this check should be more broad
 	// than just "\d{1,2}\W\w+\.app"...
 	// https://help.ableton.com/hc/en-us/articles/209775945-Installing-multiple-versions-of-Live
-
-	const regex = /Ableton .{1,100}(\.app)?/gm;
-	if (!app.name.match(regex)) return false;
+	if (!app.name.match(abletonFilenameRegex)) return false;
 
 	// Get plist file:
 	const plistData = await readPlistFile(path.join(app.dir, app.name));
-	if (plistData instanceof Error){
-		return false;
-	}
+	if (plistData instanceof Error) return false;
+
+	// Check if this is actually Live; not another application renamed. If there's a matching
+	// CFBundleIdentifier we can probably skip sanity checking the rest. 
+	if (plistData?.CFBundleIdentifier !== 'com.ableton.live') return false;
 
 	// By now we have an Ableton, so let's collect some info about it.
 	const info = { errors: [] };
 
-	// Check if this is actually Live; not another application renamed. If there's a matching
-	// CFBundleIdentifier we can probably skip sanity checking the rest. 
-	if (typeof plistData.CFBundleIdentifier == 'undefined') {
-		console.warn('Failed to parse Live instance, malformed Info.plist');
-		return false;
-	}
-	if (plistData.CFBundleIdentifier !== 'com.ableton.live') {
-		console.warn('Failed to parse Live instance, incorrect CFBundleIdentifier');
-		return false;
-	}
+	// Populate basic file info:
+	info.relPath = app.name;
+	info.absPath = path.join(app.dir, app.name);
 
 	// Read installed variaent:
 	// ps: I had to download Intro and diff the entire folder to find this because I'm 
 	// dumb and didn't bother checking an obvious .cfg file
 	const installInfo = await readJSONFile(path.join(
-			app.dir, app.name, './Contents/Resources/Installation.cfg'
+		app.dir, app.name, './Contents/Resources/Installation.cfg'
 	));
-
+	
 	info.variant = installInfo.variant;
 
-	info.relPath = app.name;
-	info.absPath = path.join(app.dir, app.name);
+	// Read variant file:
+	const installFilePath = path.join(app.dir, app.name, './Contents/Resources/Installation.cfg');
+	info.variant = (await readJSONFile(installFilePath)).variant;
+
 
 	// I'm using a dirty trick to get the first word, basically just creating an
 	// ephemeral array and popping the first off, which is the version string.
@@ -147,13 +150,11 @@ async function getAppInfo(app){
 	const licences = await getLicencesByVersion(info.version);
 
 	info.addons = [];
-	info.licence = null;
 
 	for (const l of licences){
 
 		// Seperate addons, and append to info obj:
-		if (l.productIdRaw[0] !== 0x00 || 
-		l.productIdRaw[1] > 5 ) {
+		if (l.productIdRaw[0] !== 0x00 || l.productIdRaw[1] > 5) {
 			info.addons.push(l);
 			continue;
 		}

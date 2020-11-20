@@ -99,3 +99,9 @@ Extracts the Ableton licences you currently have activated on your machine, and 
 ## TODO
 
 - Proper support for future ARM-based versions of Ableton. I've added preliminary support already, but since no versions exist, it has not been tested. We currently check for aarch64 binaries, but it's possible that Ableton may use a "Fat binary", simiiar to universal binaries from PPC days. This is not correctly handled and will result in an "Unknown architecture" error and an empty `.arch` array. 
+
+<!-- For some reason the node-detect-readme-badges library doesn't like my links, so I'm cheating by adding some here -->
+<!--https://api.travis-ci.org/1/1.svg-->
+<!--https://api.travis-ci.org/2/2.svg-->
+<!--https://api.travis-ci.org/3/3.svg-->
+<!--https://api.travis-ci.org/4/4.svg-->

@@ -191,48 +191,6 @@ async function getAppInfo(app){
 		info.errors.push(`Unsupported OS, needs ${info.minSystemVersion} or newer`);
 	}
 
-
-	// Get licence information (Experimental)
-	const licences = await getLicencesByVersion(info.version);
-
-	info.addons = [];
-	info.licence = null;
-
-	for (const l of licences){
-
-		// Seperate addons, and append to info obj:
-		if (l.productIdRaw[0] !== 0x00 || 
-				l.productIdRaw[1] > 5 ) {
-			info.addons.push(l);
-			continue;
-		}
-
-		// Otherwise, probably a product:
-		if (l.productIdRaw[1] == 0x00 && info.variant == 'Suite'){
-			info.licence = l;
-		}
-
-		if (l.productIdRaw[1] == 0x01 && info.variant == 'Standard'){
-			info.licence = l;
-		}
-
-		if (l.productIdRaw[1] == 0x02 && info.variant == 'Intro'){
-			info.licence = l;
-		}
-
-		if (l.productIdRaw[1] == 0x04 && info.variant == 'Lite'){
-			info.licence = l;
-		}
-	}
-
-	// Throw error if we don't have a licence:
-	if (info.licence == null){
-		info.errors.push(`Missing licence for ${info.variant} version ${info.version}`);
-	}
-
-	// Easy boolean check if the Ableton has known issues
-	info.ok = info.errors.length === 0;
-
 	return info;
 }
 
@@ -244,9 +202,58 @@ export default async function getAbletons(searchDirectories) {
 
 	// For each application, quickly determine if it's an Ableton.
 	for (const app of apps) {
+
+		// Retrieve basic information for this
 		const appInfo = await getAppInfo(app);
 
-		if (appInfo) installedAbletons.push(appInfo);
+		// If we don't return a value, skip the rest:
+		if (!appInfo) continue;
+
+		// Try to get licence information:
+
+		// Get licence information (Experimental)
+		const licences = await getLicencesByVersion(appInfo.version);
+
+		appInfo.addons = [];
+		appInfo.licence = null;
+
+		for (const l of licences){
+
+			// Seperate addons, and append to info obj:
+			if (l.productIdRaw[0] !== 0x00 || 
+				l.productIdRaw[1] > 5 ) {
+				appInfo.addons.push(l);
+				continue;
+			}
+
+			// Otherwise, probably a product:
+			if (l.productIdRaw[1] == 0x00 && appInfo.variant == 'Suite'){
+				appInfo.licence = l;
+			}
+
+			if (l.productIdRaw[1] == 0x01 && appInfo.variant == 'Standard'){
+				appInfo.licence = l;
+			}
+
+			if (l.productIdRaw[1] == 0x02 && appInfo.variant == 'Intro'){
+				appInfo.licence = l;
+			}
+
+			if (l.productIdRaw[1] == 0x04 && appInfo.variant == 'Lite'){
+				appInfo.licence = l;
+			}
+		}
+
+		// Throw error if we don't have a licence:
+		if (appInfo.licence == null){
+			appInfo.errors.push(`Missing licence for ${appInfo.variant} version ${appInfo.version}`);
+		}
+
+		// Easy boolean check if the Ableton has known issues
+		appInfo.ok = appInfo.errors.length === 0;
+
+
+		installedAbletons.push(appInfo);
 	}
 
 	return installedAbletons;

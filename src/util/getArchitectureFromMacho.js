@@ -1,3 +1,4 @@
+/* eslint-disable no-fallthrough */
 import getHeaderBytes from './getHeaderBytes.js';
 
 export async function getArchitectureFromMacho(executablePath) {

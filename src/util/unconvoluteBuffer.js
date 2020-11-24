@@ -22,7 +22,7 @@ export default function unconvoluteBuffer(f){
 	}
 
 	// Swap pairs, AABBCCDD -> BBAADDCC
-	for (let [i, n] of temp.entries()) {
+	for (let [i] of temp.entries()) {
 		if (i % 2) { // It doesn't work without implicit bool cast...
 			sn[i-1] = temp[i];
 		} else {

@@ -12,7 +12,7 @@ describe('Parser error handling checks', function () {
 	let getLicencesByVersion;
 
 	before(async function(){
-		const i = await import('../src/getLicenceInfo.js');
+		const i = await import('../src/licence/getLicenceInfo.js');
 		getLicencesByVersion = i.getLicencesByVersion;
 	});
 	after(async ()=>{
@@ -65,7 +65,7 @@ describe('Parser error handling checks', function () {
 	let getLicencesByVersion;
 
 	before(async function(){
-		getLicencesByVersion = (await import('../src/getLicenceInfo.js')).default;
+		getLicencesByVersion = (await import('../src/licence/getLicenceInfo.js')).default;
 	});
 	after(async ()=>{
 		mockfs.restore();

@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import unconvoluteBuffer from './util/unconvoluteBuffer.js';
+import unconvoluteBuffer from '../util/unconvoluteBuffer.js';
 
 
 // We haven't figured out exactly how these AB1E files work, so this parser is

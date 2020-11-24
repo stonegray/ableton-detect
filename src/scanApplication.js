@@ -3,7 +3,7 @@ import semver from 'semver';
 import readPlistFile from './util/readPlistFile.js';
 import readJSONFile from './util/readJSONFile.js';
 import { getArchitectureFromMacho } from './util/getArchitectureFromMacho.js';
-import getSortedLicences from './getLicenceInfo.js';
+import getSortedLicences from './licence/getLicenceInfo.js';
 
 export const abletonFilenameRegex = /Ableton .{1,100}(\.app)?/gm;
 

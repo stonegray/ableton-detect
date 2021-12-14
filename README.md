@@ -44,10 +44,10 @@ Output:
     errors: [],
     arch: [ 'x64' ],
     addons: [
-      /* Addon support is experimental and may change! */
+      /* Addon support is experimental and may change, exports a structure */
+      /* similar to the licence object below: */
     ],
     licence: {
-      /* Licence support is experimental and may change! */
       logicalId: 0,
       licenceId: 0,
       versionCode: 160,

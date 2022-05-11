@@ -27,6 +27,7 @@ Output:
     {
     relPath: 'Ableton Live 10 Lite.app',
     absPath: '/Applications/Ableton Live 10 Lite.app',
+	hidden: false,
     version: SemVer {
       raw: '10.1.25',
       major: 10,

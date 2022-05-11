@@ -38,6 +38,10 @@ export default async function scanApplication(app) {
 	info.relPath = app.name;
 	info.absPath = path.join(app.dir, app.name);
 
+	// Set a hidden flag if the app starts with ".", this is used during
+	// updates.
+	info.hidden = app.name[0] == '.';
+
 	// Read installed variaent:
 	// ps: I had to download Intro and diff the entire folder to find this because I'm 
 	// dumb and didn't bother checking an obvious .cfg file

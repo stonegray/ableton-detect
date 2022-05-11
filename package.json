@@ -34,9 +34,9 @@
     "node": ">=15.0"
   },
   "dependencies": {
-    "macos-release": "^2.4.1",
-    "plist": "^3.0.1",
-    "semver": "^7.3.2"
+    "macos-release": "^2.5.0",
+    "plist": "^3.0.5",
+    "semver": "^7.3.7"
   },
   "devDependencies": {
     "c8": "^7.3.5",

@@ -59,6 +59,14 @@ export default async function scanApplication(app) {
 	// I'm using a dirty trick to get the first word, basically just creating an
 	// ephemeral array and popping the first off, which is the version string.
 	info.version = semver.coerce(plistData.CFBundleVersion.split(' ').shift());
+	
+	// We can get the 
+	const splitBuildRegex = /\((.*)\)/;
+
+	// Attempt to parse the build string if available.
+	try {
+		info.version.build = splitBuildRegex.exec(plistData.CFBundleVersion)[1];
+	} catch(e){false;}
 
 	info.fullVersion = plistData.CFBundleVersion;
 

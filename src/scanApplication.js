@@ -3,7 +3,7 @@ import semver from 'semver';
 import readPlistFile from './util/readPlistFile.js';
 import readJSONFile from './util/readJSONFile.js';
 import { getArchitectureFromMacho } from './util/getArchitectureFromMacho.js';
-import getSortedLicences from './getLicenceInfo.js';
+import getSortedLicences from './licence/getLicenceInfo.js';
 
 export const abletonFilenameRegex = /Ableton .{1,100}(\.app)?/gm;
 
@@ -37,6 +37,10 @@ export default async function scanApplication(app) {
 	// Populate basic file info:
 	info.relPath = app.name;
 	info.absPath = path.join(app.dir, app.name);
+
+	// Set a hidden flag if the app starts with ".", this is used during
+	// updates.
+	info.hidden = app.name[0] == '.';
 
 	// Read installed variaent:
 	// ps: I had to download Intro and diff the entire folder to find this because I'm 

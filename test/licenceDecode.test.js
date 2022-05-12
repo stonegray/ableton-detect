@@ -12,7 +12,7 @@ describe('Parse test licence database', function () {
 	let getLicencesByVersion;
 
 	before(async function(){
-		const i = await import('../src/getLicenceInfo.js');
+		const i = await import('../src/licence/getLicenceInfo.js');
 		getLicencesByVersion = i.getLicencesByVersion;
 	});
 	after(async ()=>{

@@ -6,7 +6,7 @@
     "lint": "./node_modules/.bin/eslint src/** || true",
     "test-only": "./node_modules/.bin/mocha --exit \"./test/**/*.test.js\"",
     "test": "./node_modules/.bin/c8 --reporter=html --reporter=lcov --reporter=text npm run test-only",
-    "coveralls": "npm test && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,8 @@
   "keywords": [
     "Ableton",
     "als",
-    "Live"
+    "Live",
+    "DAW"
   ],
   "os": [
     "darwin",
@@ -33,16 +34,15 @@
     "node": ">=15.0"
   },
   "dependencies": {
-    "macos-release": "^2.4.1",
-    "plist": "^3.0.1",
-    "semver": "^7.3.2"
+    "macos-release": "^2.5.0",
+    "plist": "^3.0.5",
+    "semver": "^7.3.7"
   },
   "devDependencies": {
     "c8": "^7.3.5",
     "coveralls": "^3.1.0",
     "eslint": "^7.13.0",
     "mocha": "^8.2.1",
-    "mock-fs": "^4.13.0",
-    "nyc": "^15.0.0"
+    "mock-fs": "^4.13.0"
   }
 }

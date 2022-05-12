@@ -2,7 +2,7 @@
 
 **Get information from installed Ableton Live instances**
 
-[![](https://img.shields.io/npm/dt/@stonegray/ableton-detect)](https://www.npmjs.com/package/@stonegray/ableton-detect) [![Build Status](https://travis-ci.com/stonegray/ableton-detect.svg?branch=main)](https://travis-ci.com/stonegray/ableton-detect) [![Coverage Status](https://coveralls.io/repos/github/stonegray/ableton-detect/badge.svg?branch=main)](https://coveralls.io/github/stonegray/ableton-detect?branch=main) [![](https://img.shields.io/codeclimate/maintainability-percentage/stonegray/ableton-detect) ![](https://img.shields.io/npm/v/@stonegray/ableton-detect)](https://www.npmjs.com/package/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) [![](https://img.shields.io/github/license/stonegray/ableton-detect)](https://github.com/stonegray/ableton-detect/blob/main/LICENSE) ![](https://img.shields.io/github/issues-raw/stonegray/ableton-detect) ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/@stonegray/ableton-detect) ![](https://img.shields.io/badge/platform-macOS-blue)
+[![](https://img.shields.io/npm/dt/@stonegray/ableton-detect)](https://www.npmjs.com/package/@stonegray/ableton-detect) [![Build Status](https://travis-ci.com/stonegray/ableton-detect.svg?branch=main)](https://travis-ci.com/stonegray/ableton-detect) [![Coverage Status](https://coveralls.io/repos/github/stonegray/ableton-detect/badge.svg?branch=main)](https://coveralls.io/github/stonegray/ableton-detect?branch=main) [![](https://img.shields.io/codeclimate/maintainability-percentage/stonegray/ableton-detect) ![](https://img.shields.io/npm/v/@stonegray/ableton-detect)](https://www.npmjs.com/package/@stonegray/ableton-detect) ![](https://img.shields.io/github/languages/code-size/stonegray/ableton-detect) [![](https://img.shields.io/github/license/stonegray/ableton-detect)](https://github.com/stonegray/ableton-detect/blob/main/LICENSE) ![](https://img.shields.io/github/issues-raw/stonegray/ableton-detect) ![](https://img.shields.io/badge/platform-macOS-blue)
 
 `ableton-detect` scans application folders and returns an array of all installed Ableton Live instances. For every detected instance, it attempts to read the versions, varients (eg. Suite), architectures, ableton licences, addon licences, serial numbers and more, reporting any issues it encounters. 
 
@@ -45,10 +45,16 @@ Output:
     errors: [],
     arch: [ 'x64' ],
     addons: [
-      /* Addon support is experimental and may change! */
+      {
+        productId: '40',
+        licenceId: 1,
+        versionCode: 16,
+        serial: '37B6-7A82-3991-4943-8AEE-617E',
+        distrobutionType: 80
+      }
+      /* ... 271 more items */
     ],
     licence: {
-      /* Licence support is experimental and may change! */
       logicalId: 0,
       licenceId: 0,
       versionCode: 160,
@@ -78,7 +84,9 @@ Example uses of this information:
  - Licencing your software by tying it to a unique Ableton seat
  - Verifying that the software is genuine
 
-Licences are stored in the `AB1E5678` (.cfg) files, which I don't have any documentation for. The current code to read the file format works, but needs to be rewriten once we know how to correctly decode the format using the information in the header.
+Additional fields (such as Buffer instances of serials) are included in the output but not shown in the example above. 
+
+Licences are stored in the `AB1E5678` (.cfg) files, which I don't have any documentation for. The current code to read the file format works, but should be rewriten.
 
 Licences are stored on the system by version, so the licences array for all varients of the same version will share the Addons field.
 
@@ -97,9 +105,6 @@ Extracts the Ableton licences you currently have activated on your machine, and 
 
 *Made something neat with this library? File an issue or submit a PR!*
 
-## TODO
-
-- Proper support for future ARM-based versions of Ableton. I've added preliminary support already, but since no versions exist, it has not been tested. We currently check for aarch64 binaries, but it's possible that Ableton may use a "Fat binary", simiiar to universal binaries from PPC days. This is not correctly handled and will result in an "Unknown architecture" error and an empty `.arch` array. 
 
 <!-- For some reason the node-detect-readme-badges library doesn't like my links, so I'm cheating by adding some here -->
 <!--https://api.travis-ci.org/1/1.svg-->
